@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,14 +8,21 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          // useMaterial3: true,
-          ),
+        textTheme: GoogleFonts.fredokaTextTheme(
+          ThemeData(brightness: Brightness.dark).textTheme.copyWith(
+                bodyLarge: const TextStyle(color: Colors.white),
+                bodyMedium: const TextStyle(color: Colors.white),
+                labelLarge: const TextStyle(color: Colors.white),
+                labelMedium: const TextStyle(color: Colors.white),
+                labelSmall: const TextStyle(color: Colors.white),
+              ),
+        ),
+      ),
       home: const MyHomePage(),
     );
   }
@@ -28,6 +36,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 150,
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.6,
             decoration: const BoxDecoration(
               color: Color(0xff1F2022),
               borderRadius: BorderRadius.only(
@@ -53,51 +62,122 @@ class _MyHomePageState extends State<MyHomePage> {
                 topRight: Radius.circular(20.0),
               ),
             ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: TextFormField(
-                    decoration: const InputDecoration(labelText: 'Full Name'),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Email Address'),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: TextFormField(
-                    decoration: const InputDecoration(labelText: 'Password'),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  child: TextFormField(
-                    decoration: const InputDecoration(labelText: 'Username'),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  decoration: const BoxDecoration(
-                    color: Color(0xff398AD9),
-                    borderRadius: BorderRadius.all(Radius.circular(
-                        10.0)), // Use const for Radius and BorderRadius
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(color: Colors.white, fontSize: 22),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 30.0,
+                left: 30,
+                right: 30,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff121315),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.all(10),
+                    child: TextFormField(
+                      decoration: const InputDecoration.collapsed(
+                        hintText: 'Full Name',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff121315),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.all(10),
+                    child: TextFormField(
+                      decoration: const InputDecoration.collapsed(
+                        hintText: 'Username',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff121315),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.all(10),
+                    child: TextFormField(
+                      decoration: const InputDecoration.collapsed(
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff121315),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(15),
+                    margin: const EdgeInsets.all(10),
+                    child: TextFormField(
+                      decoration: const InputDecoration.collapsed(
+                        hintText: 'User name',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                    child: Row(
+                      children: [
+                        const Text('Remember Me'),
+                        Checkbox(
+                            value: isChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isChecked = value!;
+                              });
+                            })
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: const BoxDecoration(
+                      color: Color(0xff398AD9),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    margin: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'SIGN UP',
+                        style: TextStyle(color: Colors.white, fontSize: 22),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    margin: const EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Already have an account ?',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],
