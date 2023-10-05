@@ -1,4 +1,4 @@
-import 'package:anime_rush/screen/home_page.dart';
+import 'package:anime_rush/screen/question_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -134,7 +134,14 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         margin: const EdgeInsets.all(10),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QuestionPage(),
+                              ),
+                            );
+                          },
                           child: const Text(
                             'SIGN UP',
                             style: TextStyle(color: Colors.white, fontSize: 22),
@@ -145,14 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: MediaQuery.of(context).size.width * 0.9,
                         margin: const EdgeInsets.all(10),
                         child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
-                            );
-                          },
+                          onPressed: () {},
                           child: const Text(
                             'Already have an account ?',
                             style: TextStyle(color: Colors.white, fontSize: 18),
