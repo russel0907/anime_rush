@@ -1,3 +1,4 @@
+import 'package:anime_rush/screen/home_page.dart';
 import 'package:anime_rush/screen/list_page.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,7 @@ class _Question2PageState extends State<Question2Page> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ListPage(),
+                                    builder: (context) => HomePage(),
                                   ),
                                 );
                               },
