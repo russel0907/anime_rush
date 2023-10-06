@@ -38,8 +38,8 @@ class _Question2PageState extends State<Question2Page> {
                   alignment: Alignment.bottomCenter,
                   child: Column(children: [
                     const Text(
-                      'Are you manga reader?',
-                      style: TextStyle(fontSize: 40),
+                      'Continue questionnaire or skip for now ?',
+                      style: TextStyle(fontSize: 32),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(

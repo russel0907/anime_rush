@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
               radius: 20.0,
-              backgroundImage: AssetImage('assets/profile_pic.png'),
+              backgroundImage: AssetImage('assets/images/circle-avatar.png'),
             ),
           ),
         ],
