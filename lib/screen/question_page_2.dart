@@ -1,5 +1,4 @@
 import 'package:anime_rush/screen/home_page.dart';
-import 'package:anime_rush/screen/list_page.dart';
 import 'package:flutter/material.dart';
 
 class Question2Page extends StatefulWidget {
