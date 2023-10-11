@@ -1,5 +1,7 @@
+import 'package:anime_rush/screen/home_anime_page.dart';
+import 'package:anime_rush/screen/home_manga_page.dart';
+import 'package:anime_rush/screen/home_movies_page.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,7 +10,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final String getMediaTrend = '''
@@ -34,19 +37,75 @@ class _HomePageState extends State<HomePage> {
     }
   ''';
 
+  final String getMangaTrend = '''
+
+{
+  Page(page: 1, perPage: 1000) {
+    media(format: MANGA) {
+      id
+      description
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+      format
+      coverImage{
+        large
+      }
+    }
+  }
+}
+
+''';
+
+  final String getMovieTrend = '''
+
+{
+  Page(page: 1, perPage: 1000) {
+    media(format: MOVIE) {
+      id
+      description
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+      format
+      coverImage{
+        large
+      }
+    }
+  }
+}
+
+''';
+
   var variables = {
     'page': 1,
     'perPage': 10,
   };
 
-  final List<Widget> _pages = [
-    // For example: Page1(), Page2(), Page3(), ...
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,10 +129,10 @@ class _HomePageState extends State<HomePage> {
         ],
         title: const SizedBox.shrink(),
         bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(130.0),
+            preferredSize: const Size.fromHeight(80.0),
             child: Container(
               margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.075),
+                  bottom: MediaQuery.of(context).size.height * 0.015),
               width: MediaQuery.of(context).size.width * 0.9,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
@@ -92,113 +151,42 @@ class _HomePageState extends State<HomePage> {
               ),
             )),
       ),
-      body: Container(
-        color: const Color(0xff121315),
-        child: Query(
-          options: QueryOptions(
-            document: gql(getMediaTrend),
-            variables: variables,
-          ),
-          builder: (
-            QueryResult result, {
-            Future<QueryResult?> Function(FetchMoreOptions)? fetchMore,
-            Future<QueryResult?> Function()? refetch,
-          }) {
-            if (result.hasException) {
-              return Text('Error: ${result.exception.toString()}');
-            }
-
-            if (result.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final mediaList = result.data?['Page']['media'];
-
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.only(left: 16.0, right: 16, top: 16),
-                    child: Text(
-                      'Trending Now',
-                      style: TextStyle(color: Color(0xff8F8F8F), fontSize: 16),
-                    ),
+      body: Stack(
+        children: [
+          Container(
+            color: const Color(0xff121315),
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  width: MediaQuery.of(context).size.width,
+                  color: const Color(0xFF1F2022),
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: 'Anime'),
+                      Tab(text: 'Manga'),
+                      Tab(text: 'News'),
+                    ],
                   ),
-                  if (mediaList != null)
-                    GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: mediaList.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final media = mediaList[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.8,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  child: Image.network(
-                                    media['coverImage']['large'],
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                ),
-                                Positioned.fill(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                        colors: [
-                                          Colors.black.withOpacity(0.7),
-                                          Colors.transparent,
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 10,
-                                  left: 10,
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 40,
-                                        width: 3,
-                                        color: const Color(0xff398AD9),
-                                      ),
-                                      Container(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.36,
-                                        child: Text(
-                                            'Romaji: ${media['title']['romaji']}'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      HomeAnimeTabPage(
+                          getMediaTrend: getMediaTrend, variables: variables),
+                      HomeMangaTabPage(
+                          getMediaTrend: getMangaTrend, variables: variables),
+                      HomeMoviesTabPage(
+                          getMediaTrend: getMovieTrend, variables: variables)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF1F2022),
