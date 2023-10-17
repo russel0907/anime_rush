@@ -1,3 +1,4 @@
+import 'package:anime_rush/screen/anime_page.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -65,56 +66,68 @@ class _HomeAnimeTabPageState extends State<HomeAnimeTabPage> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final media = mediaList[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.0),
-                          child: Stack(
-                            children: [
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.8,
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                child: Image.network(
-                                  media['coverImage']['large'],
-                                  fit: BoxFit.fitWidth,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AnimePage(media: media)));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.8,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Image.network(
+                                    media['coverImage']['large'],
+                                    fit: BoxFit.fitWidth,
+                                  ),
                                 ),
-                              ),
-                              Positioned.fill(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        Colors.black.withOpacity(0.7),
-                                        Colors.transparent,
-                                      ],
+                                Positioned.fill(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          Colors.black.withOpacity(0.7),
+                                          Colors.transparent,
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
-                                bottom: 10,
-                                left: 10,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 40,
-                                      width: 3,
-                                      color: const Color(0xff398AD9),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.36,
-                                      child:
-                                          Text('${media['title']['romaji']}'),
-                                    ),
-                                  ],
+                                Positioned(
+                                  bottom: 10,
+                                  left: 10,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 40,
+                                        width: 3,
+                                        color: const Color(0xff398AD9),
+                                      ),
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.36,
+                                        child:
+                                            Text('${media['title']['romaji']}'),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
