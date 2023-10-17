@@ -15,32 +15,37 @@ class _HomePageState extends State<HomePage>
   int _selectedIndex = 0;
 
   final String getMediaTrend = '''
-    query GetMediaTrend(\$page: Int, \$perPage: Int) {
-      Page(page: \$page, perPage: \$perPage) {
-        pageInfo {
-          total
-          currentPage
-          lastPage
-          hasNextPage
-          perPage
-        }
-        media {
-          id
-          title {
-            romaji
-          }
-          coverImage {
-            large
-            }
-        }
+
+{
+  Page(page: 1, perPage: 10) {
+    media(format: TV) {
+      id
+      description
+      title {
+        romaji
+        english
+        native
+        userPreferred
+      }
+      format
+      coverImage{
+        large
+      }
+      streamingEpisodes {
+        title
+        thumbnail
+        url
+        site
       }
     }
+  }
+}
   ''';
 
   final String getMangaTrend = '''
 
 {
-  Page(page: 1, perPage: 1000) {
+  Page(page: 1, perPage: 10) {
     media(format: MANGA) {
       id
       description
@@ -63,7 +68,7 @@ class _HomePageState extends State<HomePage>
   final String getMovieTrend = '''
 
 {
-  Page(page: 1, perPage: 1000) {
+  Page(page: 1, perPage: 10) {
     media(format: MOVIE) {
       id
       description
