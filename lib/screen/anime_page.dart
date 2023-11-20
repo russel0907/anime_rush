@@ -62,35 +62,82 @@ class _AnimePageState extends State<AnimePage> {
           ),
           Column(
             children: [
-              Center(
-                  child: Container(
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.05,
-                ),
-                height: MediaQuery.of(context).size.height * 0.23,
-                width: MediaQuery.of(context).size.width * 0.85,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child:
-                    widget.media['streamingEpisodes'][0]['thumbnail'] != null &&
+              Column(
+                children: [
+                  Center(
+                      child: Container(
+                    margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.05,
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.23,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: widget.media['streamingEpisodes'] != null &&
+                            widget.media['streamingEpisodes'].isNotEmpty &&
+                            widget.media['streamingEpisodes'][0] != null &&
+                            widget.media['streamingEpisodes'][0]['thumbnail'] !=
+                                null &&
                             (widget.media['streamingEpisodes'][0]['thumbnail']
                                     as String)
                                 .isNotEmpty
-                        ? DecoratedBox(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    widget.media['streamingEpisodes'][0]
-                                        ['thumbnail'] as String),
-                                fit: BoxFit.cover,
-                              ),
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the radius as needed
+                            child: Stack(
+                              alignment: Alignment.center,
+                              fit: StackFit.expand,
+                              children: [
+                                Image.network(
+                                  widget.media['streamingEpisodes'][0]
+                                      ['thumbnail'] as String,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  left: 0,
+                                  top: 0,
+                                  child: Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color.fromARGB(35, 212, 212, 212),
+                                            Color.fromARGB(106, 195, 195, 195),
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: GestureDetector(
+                                          onTap: () {},
+                                          child: Image.asset(
+                                            'assets/images/play_button.png',
+                                            width: 48.0,
+                                            height: 48.0,
+                                          ),
+                                        ),
+                                      )),
+                                ),
+                              ],
                             ),
                           )
-                        : Center(
+                        : const Center(
                             child: Text("No streaming episode available"),
                           ),
-              )),
+                  )),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.23,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    color: Colors.amber,
+                  )
+                ],
+              ),
             ],
           )
         ],
