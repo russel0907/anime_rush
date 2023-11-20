@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: const Color(0xff121315),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -148,9 +148,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.9,
-                        margin: const EdgeInsets.all(10),
                         child: TextButton(
                           onPressed: () {},
                           child: const Text(
