@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   final String getMediaTrend = '''
 
