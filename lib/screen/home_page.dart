@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage>
   int _selectedIndex = 1;
 
   final String getMediaTrend = '''
-
 {
   Page(page: 1, perPage: 10) {
     media(format: TV) {
@@ -30,6 +29,28 @@ class _HomePageState extends State<HomePage>
       format
       coverImage{
         large
+        medium
+      }
+bannerImage
+      season
+      seasonInt
+      seasonYear
+      episodes
+      status
+      volumes
+      chapters
+      nextAiringEpisode {
+        id
+        episode
+        timeUntilAiring
+        media{
+          title {
+            romaji
+            english
+            native
+            userPreferred
+          }
+        }
       }
       streamingEpisodes {
         title
@@ -171,7 +192,7 @@ class _HomePageState extends State<HomePage>
                     tabs: const [
                       Tab(text: 'Anime'),
                       Tab(text: 'Manga'),
-                      Tab(text: 'News'),
+                      Tab(text: 'Movie'),
                     ],
                   ),
                 ),
