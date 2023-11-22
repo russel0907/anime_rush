@@ -1,6 +1,7 @@
 import 'package:anime_rush/screen/home_anime_page.dart';
 import 'package:anime_rush/screen/home_manga_page.dart';
 import 'package:anime_rush/screen/home_movies_page.dart';
+import 'package:anime_rush/screen/notification_page.dart';
 import 'package:anime_rush/screen/search_result_page.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +16,6 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 1;
   final TextEditingController _searchController = TextEditingController();
-
-
 
   final String getMangaTrend = '''
 
@@ -70,9 +69,21 @@ class _HomePageState extends State<HomePage>
   };
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 0) {
+      // Navigate to the NotificationPage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NotificationPage(
+            variables: variables,
+          ), // Replace with the actual widget
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   late TabController _tabController;
@@ -184,8 +195,7 @@ class _HomePageState extends State<HomePage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      HomeAnimeTabPage(
-                           variables: variables),
+                      HomeAnimeTabPage(variables: variables),
                       HomeMangaTabPage(
                           getMediaTrend: getMangaTrend, variables: variables),
                       HomeMoviesTabPage(
