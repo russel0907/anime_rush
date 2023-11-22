@@ -1,5 +1,6 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SeasonPage extends StatefulWidget {
   final dynamic media;
@@ -251,10 +252,21 @@ class _SeasonPageState extends State<SeasonPage> {
                                       ],
                                     ),
                                   ),
-                                  Image.asset(
-                                    'assets/images/tick.png',
-                                    width: 28.0,
-                                    height: 28.0,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      var url = Uri.parse(episode['url']);
+
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
+                                    child: Image.asset(
+                                      'assets/images/tick.png',
+                                      width: 28.0,
+                                      height: 28.0,
+                                    ),
                                   ),
                                 ],
                               ),
