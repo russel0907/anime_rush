@@ -1,6 +1,7 @@
 import 'package:anime_rush/screen/home_anime_page.dart';
 import 'package:anime_rush/screen/home_manga_page.dart';
 import 'package:anime_rush/screen/home_movies_page.dart';
+import 'package:anime_rush/screen/search_result_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,55 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 1;
+  final TextEditingController _searchController = TextEditingController();
 
-  final String getMediaTrend = '''
-{
-  Page(page: 1, perPage: 10) {
-    media(format: TV) {
-      id
-      description
-      title {
-        romaji
-        english
-        native
-        userPreferred
-      }
-      format
-      coverImage{
-        large
-        medium
-      }
-bannerImage
-      season
-      seasonInt
-      seasonYear
-      episodes
-      status
-      volumes
-      chapters
-      nextAiringEpisode {
-        id
-        episode
-        timeUntilAiring
-        media{
-          title {
-            romaji
-            english
-            native
-            userPreferred
-          }
-        }
-      }
-      streamingEpisodes {
-        title
-        thumbnail
-        url
-        site
-      }
-    }
-  }
-}
-  ''';
+
 
   final String getMangaTrend = '''
 
@@ -128,6 +83,31 @@ bannerImage
     _tabController = TabController(length: 3, vsync: this);
   }
 
+  List<SearchResult> allSearchResults = [
+    SearchResult(title: "Item 1", description: "Description 1"),
+    SearchResult(title: "Item 2", description: "Description 2"),
+    SearchResult(title: "Item 3", description: "Description 3"),
+    // Add more items as needed
+  ];
+
+  void _performSearch(String searchText) {
+    // Filter the search results based on the search query
+    List<SearchResult> searchResults = allSearchResults
+        .where((result) =>
+            result.title.toLowerCase().contains(searchText.toLowerCase()) ||
+            result.description.toLowerCase().contains(searchText.toLowerCase()))
+        .toList();
+
+    // Navigate to the SearchResultPage with the filtered search results
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchResultPage(
+            searchResults: searchResults, searchText: searchText),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -165,8 +145,12 @@ bannerImage
                 child: Container(
                   color: const Color(0xff121315),
                   height: MediaQuery.of(context).size.height * 0.06,
-                  child: const TextField(
-                    decoration: InputDecoration(
+                  child: TextField(
+                    controller: _searchController,
+                    onSubmitted: (searchText) {
+                      _performSearch(searchText);
+                    },
+                    decoration: const InputDecoration(
                       contentPadding: EdgeInsets.only(left: 16.0),
                       hintText: 'Search',
                       hintStyle: TextStyle(color: Colors.white),
@@ -201,7 +185,7 @@ bannerImage
                     controller: _tabController,
                     children: [
                       HomeAnimeTabPage(
-                          getMediaTrend: getMediaTrend, variables: variables),
+                           variables: variables),
                       HomeMangaTabPage(
                           getMediaTrend: getMangaTrend, variables: variables),
                       HomeMoviesTabPage(
