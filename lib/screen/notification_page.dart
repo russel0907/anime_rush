@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -14,9 +16,9 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  int currentPage = 1; // Initial page number
-  int itemsPerPage = 20; // Number of items to fetch per page
-  bool isLoadingMore = false; // To prevent multiple requests while loading
+  int currentPage = 1;
+  int itemsPerPage = 20;
+  bool isLoadingMore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -112,30 +114,55 @@ class _NotificationPageState extends State<NotificationPage> {
                       itemBuilder: (context, index) {
                         if (index < mediaList.length) {
                           final media = mediaList[index];
+                          int timeUntilAiring = media['nextAiringEpisode'] !=
+                                  null
+                              ? media['nextAiringEpisode']['timeUntilAiring'] ??
+                                  0
+                              : 0;
+
                           return GestureDetector(
                             onTap: () {},
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    child: Image.network(
-                                      media['coverImage']['large'],
-                                      fit: BoxFit.cover,
-                                      width: 96,
-                                      height: 96,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(7),
+                                    child: SizedBox(
+                                      width: 112,
+                                      height: 112,
+                                      child: Image.network(
+                                        media['coverImage']['large'],
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    media['nextAiringEpisode'] != null
-                                        ? media['nextAiringEpisode']
-                                                    ['timeUntilAiring'] !=
-                                                null
-                                            ? media['nextAiringEpisode']
-                                                    ['timeUntilAiring']
-                                                .toString()
-                                            : 'No Available Yet'
-                                        : 'No Available Yet',
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.04,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.55,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.1,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            media['title']['english'] ??
+                                                media['title']['romaji'],
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                        CountdownWidget(timeUntilAiring),
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
@@ -153,18 +180,22 @@ class _NotificationPageState extends State<NotificationPage> {
                       mediaList != null &&
                       mediaList.length > 0)
                     GestureDetector(
-                        onTap: () {},
-                        child: Center(
-                            child: Padding(
+                      onTap: () {
+                        loadNextPage();
+                      },
+                      child: Center(
+                        child: Padding(
                           padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.04,
-                              bottom:
-                                  MediaQuery.of(context).size.height * 0.06),
+                            top: MediaQuery.of(context).size.height * 0.04,
+                            bottom: MediaQuery.of(context).size.height * 0.06,
+                          ),
                           child: const Text(
                             'Load More',
                             style: TextStyle(fontSize: 17),
                           ),
-                        ))),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             );
@@ -172,5 +203,134 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
     );
+  }
+
+  void loadNextPage() {
+    if (!isLoadingMore) {
+      setState(() {
+        isLoadingMore = true;
+      });
+
+      final options = QueryOptions(
+        document: gql('''
+      {
+        Page(page: $currentPage, perPage: $itemsPerPage) {
+          media(format: TV) {
+            id
+            description
+            title {
+              romaji
+              english
+              native
+              userPreferred
+            }
+            format
+            coverImage {
+              large
+              medium
+            }
+            bannerImage
+            season
+            seasonInt
+            seasonYear
+            episodes
+            status
+            volumes
+            chapters
+            nextAiringEpisode {
+              id
+              episode
+              timeUntilAiring
+              media {
+                title {
+                  romaji
+                  english
+                  native
+                  userPreferred
+                }
+              }
+            }
+            streamingEpisodes {
+              title
+              thumbnail
+              url
+              site
+            }
+          }
+        }
+      }
+      '''),
+        variables: widget.variables,
+      );
+
+      GraphQLClient client = GraphQLProvider.of(context).value;
+      client.query(options).then((newResult) {
+        setState(() {
+          isLoadingMore = false;
+          currentPage++;
+        });
+      });
+    }
+  }
+}
+
+class CountdownWidget extends StatefulWidget {
+  final int initialTimeInSeconds;
+
+  const CountdownWidget(this.initialTimeInSeconds, {super.key});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _CountdownWidgetState createState() => _CountdownWidgetState();
+}
+
+class _CountdownWidgetState extends State<CountdownWidget> {
+  int remainingTimeInSeconds = 0;
+  late Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+    remainingTimeInSeconds = widget.initialTimeInSeconds;
+    startCountdown();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  void startCountdown() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTimeInSeconds > 0) {
+        setState(() {
+          remainingTimeInSeconds--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (remainingTimeInSeconds == 0) {
+      return const Text('Unavailable Time Airing');
+    } else {
+      return Text(
+        formatTime(remainingTimeInSeconds),
+        style: const TextStyle(fontSize: 11),
+      );
+    }
+  }
+
+  String formatTime(int timeInSeconds) {
+    int days = (timeInSeconds ~/ (60 * 60 * 24)) % 365;
+    int hours = (timeInSeconds ~/ (60 * 60)) % 24;
+    int minutes = (timeInSeconds ~/ 60) % 60;
+    int seconds = timeInSeconds % 60;
+
+    return '$days days, $hours hours, $minutes minutes, $seconds seconds';
   }
 }
