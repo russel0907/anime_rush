@@ -19,6 +19,30 @@ class _NotificationPageState extends State<NotificationPage> {
   int currentPage = 1;
   int itemsPerPage = 20;
   bool isLoadingMore = false;
+  ScrollController scrollController = ScrollController();
+  List<dynamic> mediaList = [];
+
+  late GraphQLClient client;
+
+  void _scrollListener() {
+    if (scrollController.offset >= scrollController.position.maxScrollExtent &&
+        !scrollController.position.outOfRange) {
+      loadNextPage();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    client = GraphQLProvider.of(context).value;
+    loadNextPage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,13 +110,16 @@ class _NotificationPageState extends State<NotificationPage> {
               return Text('Error: ${result.exception.toString()}');
             }
 
-            if (result.isLoading) {
+            if (result.isLoading && mediaList.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final mediaList = result.data?['Page']['media'];
+            if (mediaList.isEmpty) {
+              return const Center(child: Text('No Content'));
+            }
 
             return SingleChildScrollView(
+              controller: scrollController,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -106,96 +133,60 @@ class _NotificationPageState extends State<NotificationPage> {
                       style: TextStyle(color: Color(0xff8F8F8F), fontSize: 16),
                     ),
                   ),
-                  if (mediaList != null)
-                    ListView.builder(
-                      itemCount: mediaList.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        if (index < mediaList.length) {
-                          final media = mediaList[index];
-                          int timeUntilAiring = media['nextAiringEpisode'] !=
-                                  null
-                              ? media['nextAiringEpisode']['timeUntilAiring'] ??
-                                  0
-                              : 0;
+                  ListView.builder(
+                    itemCount: mediaList.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final media = mediaList[index];
 
-                          return GestureDetector(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(7),
-                                    child: SizedBox(
-                                      width: 112,
-                                      height: 112,
-                                      child: Image.network(
-                                        media['coverImage']['large'],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.04,
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.55,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.1,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            media['title']['english'] ??
-                                                media['title']['romaji'],
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        CountdownWidget(timeUntilAiring),
-                                      ],
-                                    ),
-                                  )
-                                ],
+                      int timeUntilAiring = media['nextAiringEpisode'] != null
+                          ? media['nextAiringEpisode']['timeUntilAiring'] ?? 0
+                          : 0;
+
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(7),
+                              child: SizedBox(
+                                width: 112,
+                                height: 112,
+                                child: Image.network(
+                                  media['coverImage']['large'],
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          );
-                        } else if (isLoadingMore) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else {
-                          return const Center(child: Text('No More Content'));
-                        }
-                      },
-                    ),
-                  if (!isLoadingMore &&
-                      mediaList != null &&
-                      mediaList.length > 0)
-                    GestureDetector(
-                      onTap: () {
-                        loadNextPage();
-                      },
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.04,
-                            bottom: MediaQuery.of(context).size.height * 0.06,
-                          ),
-                          child: const Text(
-                            'Load More',
-                            style: TextStyle(fontSize: 17),
-                          ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.55,
+                              height: MediaQuery.of(context).size.height * 0.1,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      media['title']['english'] ??
+                                          media['title']['romaji'],
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                  CountdownWidget(timeUntilAiring),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                    ),
+                      );
+                    },
+                  ),
+                  if (isLoadingMore)
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             );
@@ -213,61 +204,64 @@ class _NotificationPageState extends State<NotificationPage> {
 
       final options = QueryOptions(
         document: gql('''
-      {
-        Page(page: $currentPage, perPage: $itemsPerPage) {
-          media(format: TV) {
-            id
-            description
-            title {
-              romaji
-              english
-              native
-              userPreferred
-            }
-            format
-            coverImage {
-              large
-              medium
-            }
-            bannerImage
-            season
-            seasonInt
-            seasonYear
-            episodes
-            status
-            volumes
-            chapters
-            nextAiringEpisode {
-              id
-              episode
-              timeUntilAiring
-              media {
-                title {
-                  romaji
-                  english
-                  native
-                  userPreferred
+            {
+              Page(page: $currentPage, perPage: $itemsPerPage) {
+                media(format: TV, status:RELEASING) {
+                  id
+                  description
+                  title {
+                    romaji
+                    english
+                    native
+                    userPreferred
+                  }
+                  format
+                  coverImage {
+                    large
+                    medium
+                  }
+                  bannerImage
+                  season
+                  seasonInt
+                  seasonYear
+                  episodes
+                  status
+                  volumes
+                  chapters
+                  nextAiringEpisode {
+                    id
+                    episode
+                    timeUntilAiring
+                    media {
+                      title {
+                        romaji
+                        english
+                        native
+                        userPreferred
+                      }
+                    }
+                  }
+                  streamingEpisodes {
+                    title
+                    thumbnail
+                    url
+                    site
+                  }
                 }
               }
             }
-            streamingEpisodes {
-              title
-              thumbnail
-              url
-              site
-            }
-          }
-        }
-      }
-      '''),
+            '''),
         variables: widget.variables,
       );
 
-      GraphQLClient client = GraphQLProvider.of(context).value;
       client.query(options).then((newResult) {
         setState(() {
           isLoadingMore = false;
           currentPage++;
+          final newMediaList = newResult.data?['Page']['media'];
+          if (newMediaList != null) {
+            mediaList.addAll(newMediaList);
+          }
         });
       });
     }
