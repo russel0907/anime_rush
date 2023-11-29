@@ -2,6 +2,7 @@ import 'package:anime_rush/screen/home_anime_page.dart';
 import 'package:anime_rush/screen/home_manga_page.dart';
 import 'package:anime_rush/screen/home_movies_page.dart';
 import 'package:anime_rush/screen/notification_page.dart';
+import 'package:anime_rush/screen/profile_page.dart';
 import 'package:anime_rush/screen/search_result_page.dart';
 import 'package:flutter/material.dart';
 
@@ -98,7 +99,6 @@ class _HomePageState extends State<HomePage>
     SearchResult(title: "Item 1", description: "Description 1"),
     SearchResult(title: "Item 2", description: "Description 2"),
     SearchResult(title: "Item 3", description: "Description 3"),
-    // Add more items as needed
   ];
 
   void _performSearch(String searchText) {
@@ -135,12 +135,22 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.all(8.0),
           child: Image.asset('assets/images/icon-2.png'),
         ),
-        actions: const <Widget>[
+        actions: <Widget>[
           Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              radius: 20.0,
-              backgroundImage: AssetImage('assets/images/circle-avatar.png'),
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePage(),
+                  ),
+                );
+              },
+              child: const CircleAvatar(
+                radius: 20.0,
+                backgroundImage: AssetImage('assets/images/circle-avatar.png'),
+              ),
             ),
           ),
         ],
