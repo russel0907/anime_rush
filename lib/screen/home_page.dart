@@ -193,6 +193,9 @@ class _HomePageState extends State<HomePage>
                   width: MediaQuery.of(context).size.width,
                   color: const Color(0xFF1F2022),
                   child: TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorColor: const Color(0xff398AD9),
+                    labelColor: const Color(0xff398AD9),
                     controller: _tabController,
                     tabs: const [
                       Tab(text: 'Anime'),
