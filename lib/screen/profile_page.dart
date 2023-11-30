@@ -70,10 +70,10 @@ class _ProfilePageState extends State<ProfilePage>
               Container(
                 padding: const EdgeInsets.all(20),
                 color: const Color(0xFF1F2022),
-                height: MediaQuery.of(context).size.height * 0.15,
-                child: const Column(
+                height: MediaQuery.of(context).size.height * 0.17,
+                child: Column(
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -97,8 +97,14 @@ class _ProfilePageState extends State<ProfilePage>
                         )
                       ],
                     ),
-                    Text("Levi34"),
-                    Text("Berlin, Germany"),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    const Text("Levi34"),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    const Text("Berlin, Germany"),
                   ],
                 ),
               ),
@@ -108,12 +114,13 @@ class _ProfilePageState extends State<ProfilePage>
                     padding: const EdgeInsets.all(20),
                     color: const Color(0xff121315),
                     child: TabBar(
+                      labelPadding: const EdgeInsets.all(0),
                       dividerColor: Colors.transparent,
                       indicatorColor: const Color(0xff398AD9),
                       labelColor: const Color(0xff398AD9),
                       controller: _tabController,
                       tabs: const [
-                        Tab(text: 'Saved Anime'),
+                        Tab(text: 'Saved'),
                         Tab(text: 'In Progress'),
                         Tab(text: 'Movies'),
                         Tab(text: 'Activities'),
@@ -121,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
+                    height: MediaQuery.of(context).size.height * 1.05,
                     width: MediaQuery.of(context).size.width,
                     child: TabBarView(
                       controller: _tabController,
