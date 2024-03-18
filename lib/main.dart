@@ -1,4 +1,4 @@
-import 'package:anime_rush/screen/login_page.dart.dart';
+import 'package:anime_rush/screen/notification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -39,7 +39,12 @@ class MyApp extends StatelessWidget {
                 ),
           ),
         ),
-        home: const LoginPage(),
+        home: const NotificationPage(
+          variables: {
+            'page': 1,
+            'perPage': 10,
+          },
+        ),
       ),
     );
   }
