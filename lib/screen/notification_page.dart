@@ -48,7 +48,7 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color(0xff121315),
+        color: const Color(0xff181818),
         child: Query(
           options: QueryOptions(
             document: gql('''
@@ -123,67 +123,118 @@ class _NotificationPageState extends State<NotificationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 16.0,
-                        right: 16,
-                        top: MediaQuery.of(context).size.height * 0.08),
-                    child: const Text(
-                      'Airing Soon',
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: 20,
+                            left: 20,
+                            right: 20,
+                            top: MediaQuery.of(context).size.height * 0.03),
+                        child: Text(
+                          'Upcoming Episodes'.toUpperCase(),
+                          style: const TextStyle(
+                              color: Color(0xff8F8F8F),
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 20, left: 20, right: 20, top: 20),
+                        child: Image.asset(
+                          'assets/images/icon-2.png',
+                          width: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+                    child: Text(
+                      'Dont miss the latest episodes. Check out whats coming soon.',
                       style: TextStyle(color: Color(0xff8F8F8F), fontSize: 16),
                     ),
                   ),
-                  ListView.builder(
-                    itemCount: mediaList.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final media = mediaList[index];
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ListView.builder(
+                      itemCount: mediaList.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final media = mediaList[index];
 
-                      int timeUntilAiring = media['nextAiringEpisode'] != null
-                          ? media['nextAiringEpisode']['timeUntilAiring'] ?? 0
-                          : 0;
+                        int timeUntilAiring = media['nextAiringEpisode'] != null
+                            ? media['nextAiringEpisode']['timeUntilAiring'] ?? 0
+                            : 0;
 
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(7),
-                              child: SizedBox(
-                                width: 112,
-                                height: 112,
-                                child: Image.network(
-                                  media['coverImage']['large'],
-                                  fit: BoxFit.cover,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xff181818),
+                                Color(0xff1e1e1e),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            border: Border.all(
+                              color: const Color(0xff202020),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(7),
+                                child: SizedBox(
+                                  width: 112,
+                                  height: 112,
+                                  child: Image.network(
+                                    media['coverImage']['large'],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.04,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.55,
-                              height: MediaQuery.of(context).size.height * 0.1,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      media['title']['english'] ??
-                                          media['title']['romaji'],
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                  CountdownWidget(timeUntilAiring),
-                                ],
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.04,
                               ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.55,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        media['title']['english'] ??
+                                            media['title']['romaji'],
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    CountdownWidget(timeUntilAiring),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   if (isLoadingMore)
                     const Center(child: CircularProgressIndicator()),
