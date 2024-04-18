@@ -1,10 +1,5 @@
-import 'package:anime_rush/screen/home_anime_page.dart';
-import 'package:anime_rush/screen/home_manga_page.dart';
-import 'package:anime_rush/screen/home_movies_page.dart';
-import 'package:anime_rush/screen/notification_page.dart';
-import 'package:anime_rush/screen/profile_page.dart';
-import 'package:anime_rush/screen/search_result_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_polygon/flutter_polygon.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,72 +10,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 1;
-  final TextEditingController _searchController = TextEditingController();
-
-  final String getMangaTrend = '''
-
-{
-  Page(page: 1, perPage: 10) {
-    media(format: MANGA) {
-      id
-      description
-      title {
-        romaji
-        english
-        native
-        userPreferred
-      }
-      format
-      coverImage{
-        large
-      }
-    }
-  }
-}
-
-''';
-
-  final String getMovieTrend = '''
-
-{
-  Page(page: 1, perPage: 10) {
-    media(format: MOVIE) {
-      id
-      description
-      title {
-        romaji
-        english
-        native
-        userPreferred
-      }
-      format
-      coverImage{
-        large
-      }
-    }
-  }
-}
-
-''';
-
-  var variables = {
-    'page': 1,
-    'perPage': 10,
-  };
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == 0) {
-      // Navigate to the NotificationPage
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NotificationPage(
-            variables: variables,
-          ), // Replace with the actual widget
-        ),
-      );
-    } else {
+    {
       setState(() {
         _selectedIndex = index;
       });
@@ -95,30 +28,6 @@ class _HomePageState extends State<HomePage>
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  List<SearchResult> allSearchResults = [
-    SearchResult(title: "Item 1", description: "Description 1"),
-    SearchResult(title: "Item 2", description: "Description 2"),
-    SearchResult(title: "Item 3", description: "Description 3"),
-  ];
-
-  void _performSearch(String searchText) {
-    // Filter the search results based on the search query
-    List<SearchResult> searchResults = allSearchResults
-        .where((result) =>
-            result.title.toLowerCase().contains(searchText.toLowerCase()) ||
-            result.description.toLowerCase().contains(searchText.toLowerCase()))
-        .toList();
-
-    // Navigate to the SearchResultPage with the filtered search results
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SearchResultPage(
-            searchResults: searchResults, searchText: searchText),
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _tabController.dispose();
@@ -128,128 +37,206 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF1F2022),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset('assets/images/icon-2.png'),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfilePage(),
-                  ),
-                );
-              },
-              child: const CircleAvatar(
-                radius: 20.0,
-                backgroundImage: AssetImage('assets/images/circle-avatar.png'),
-              ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
             ),
-          ),
-        ],
-        title: const SizedBox.shrink(),
-        bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(80.0),
-            child: Container(
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height * 0.015),
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: Container(
-                  color: const Color(0xff121315),
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  child: TextField(
-                    controller: _searchController,
-                    onSubmitted: (searchText) {
-                      _performSearch(searchText);
-                    },
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 16.0),
-                      hintText: 'Search',
-                      hintStyle: TextStyle(color: Colors.white),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ),
-            )),
+            headComponent(),
+            vsingRoom(),
+            peoplePerformingList(),
+            interestedList()
+          ],
+        ),
       ),
-      body: Stack(
-        children: [
-          Container(
-            color: const Color(0xff121315),
-            child: Column(
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topRight: Radius.circular(24),
+            topLeft: Radius.circular(24),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: const Color(0xff0C0A32),
+            type: BottomNavigationBarType.fixed,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  'assets/images/home_bottom_app_bar_icon_inactive.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/images/home_bottom_app_bar_icon_active.png',
+                  width: 24,
+                  height: 24,
+                ),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  'assets/images/moments_bottom_app_bar_icon_inactive.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/images/moments_bottom_app_bar_icon_active.png',
+                  width: 24,
+                  height: 24,
+                ),
+                label: 'Moments',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  'assets/images/earn_bottom_app_bar_icon_inactive.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/images/earn_bottom_app_bar_icon_active.png',
+                  width: 24,
+                  height: 24,
+                ),
+                label: 'Earn',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  'assets/images/chat_bottom_app_bar_icon_inactive.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/images/chat_bottom_app_bar_icon_active.png',
+                  width: 24,
+                  height: 24,
+                ),
+                label: 'Chat',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset(
+                  'assets/images/profile_bottom_app_bar_icon_inactive.png',
+                  width: 24,
+                  height: 24,
+                ),
+                activeIcon: Image.asset(
+                  'assets/images/profile_bottom_app_bar_icon_active.png',
+                  width: 24,
+                  height: 24,
+                ),
+                label: 'Profile',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color(0xFFA2A1DD),
+            unselectedItemColor: const Color(0xFF35357B),
+            iconSize: 36,
+            onTap: _onItemTapped,
+            useLegacyColorScheme: true,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget headComponent() {
+    return Column(
+      children: [
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Icon(
+              Icons.search,
+              color: Color(0xFFA2A1DD),
+              size: 32,
+            ),
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.03,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color(0xFF1F2022),
-                  child: TabBar(
-                    dividerColor: Colors.transparent,
-                    indicatorColor: const Color(0xff398AD9),
-                    labelColor: const Color(0xff398AD9),
-                    controller: _tabController,
-                    tabs: const [
-                      Tab(text: 'Anime'),
-                      Tab(text: 'Manga'),
-                      Tab(text: 'Movie'),
-                    ],
+                CircleAvatar(
+                  child: Image.asset(
+                    'assets/images/profile_pic.png',
                   ),
                 ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      HomeAnimeTabPage(variables: variables),
-                      HomeMangaTabPage(
-                          getMediaTrend: getMangaTrend, variables: variables),
-                      HomeMoviesTabPage(
-                          getMediaTrend: getMovieTrend, variables: variables)
-                    ],
-                  ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.05,
+                ),
+                Column(
+                  children: [
+                    Container(
+                      color: const Color(0xff302D62),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.lock,
+                            color: Color(0xFFA2A1DD),
+                          ),
+                          Text('Unlock Titles')
+                        ],
+                      ),
+                    ),
+                    const Text(
+                      'Michelle Wong',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    )
+                  ],
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF1F2022),
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.notifications,
-              color: Color(0xFFDBDBDB),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.15,
+              child: ClipPolygon(
+                sides: 6,
+                borderRadius: 5.0,
+                rotate: 0,
+                child: Image.asset(
+                  'assets/images/profile_pic_2.png',
+                ),
+              ),
             ),
-            activeIcon: Icon(Icons.notifications, color: Color(0xFF398AD9)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Color(0xFFDBDBDB)),
-            activeIcon: Icon(Icons.home, color: Color(0xFF398AD9)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark, color: Color(0xFFDBDBDB)),
-            activeIcon: Icon(Icons.bookmark, color: Color(0xFF398AD9)),
-            label: '',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF398AD9),
-        iconSize: 36,
-        onTap: _onItemTapped,
-        useLegacyColorScheme: true,
-      ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget vsingRoom() {
+    return const Column(
+      children: [],
+    );
+  }
+
+  Widget peoplePerformingList() {
+    return const Column(
+      children: [],
+    );
+  }
+
+  Widget interestedList() {
+    return const Column(
+      children: [],
     );
   }
 }

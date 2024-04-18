@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="anime_rush"
+        android:label="vsing"
         android:name="${applicationName}"
         android:icon="@mipmap/icon">
         <activity

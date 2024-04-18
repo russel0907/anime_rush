@@ -1,4 +1,4 @@
-name: anime_rush
+name: vsing
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -37,10 +37,9 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_native_splash: ^2.3.2
   http: ^1.1.0
-  graphql_flutter: ^5.2.0-beta.5
   expandable_text: ^2.3.0
   url_launcher: ^6.1.14
-  supabase: ^2.0.8
+  flutter_polygon: ^0.3.0+2
 dev_dependencies:
   flutter_test:
     sdk: flutter
