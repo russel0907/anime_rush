@@ -10,10 +10,6 @@ Features:
 
 🌟 Explore: Embark on a thrilling adventure through a vast library of anime titles, from timeless classics to the latest releases. With Anime Rush, the world of anime is at your fingertips.
 
-🎨 Discover: Uncover hidden gems and must-watch series curated by fellow fans. Let Anime Rush be your guide to finding your next obsession.
-
-🔍 Search: Find exactly what you're looking for with our intuitive search feature. Whether it's by genre, studio, or keyword, Anime Rush helps you locate the perfect anime to fit your mood.
-
 📝 Track: Keep tabs on your progress with personalized watchlists and episode trackers. Never lose sight of where you left off in your favorite series.
 
 Get Started:
