@@ -1,3 +1,5 @@
+## https://anime-rush.vercel.app/
+
 # anime_rush
 
 Welcome to Anime Rush!
